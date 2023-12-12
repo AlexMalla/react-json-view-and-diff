@@ -38,6 +38,6 @@
   "skipCi": true,
   "repoType": "github",
   "repoHost": "https://github.com",
-  "projectName": "react-diff-viewer-continued",
+  "projectName": "react-json-view-and-diff",
   "projectOwner": "Aeolun"
 }
