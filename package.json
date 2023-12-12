@@ -1,8 +1,8 @@
 {
   "name": "react-json-view-and-diff",
-  "version": "3.3.1",
+  "version": "1.0",
   "private": false,
-  "description": "Continuation of a simple and beautiful text diff viewer component made with diff and React",
+  "description": "Continuation of a simple text diff viewer component made with diff and React. It now allow you to obtain also a single json.",
   "keywords": [
     "review",
     "code-review",
@@ -13,7 +13,7 @@
     "react-component",
     "ui"
   ],
-  "repository": "git@github.com:aeolun/react-diff-viewer-continued.git",
+  "repository": "git@github.com:alexmalla/react-json-view-and-diff.git",
   "license": "MIT",
   "authors": [
     "Pranesh Ravi<praneshpranesh@gmail.com>",
