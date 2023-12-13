@@ -1,10 +1,9 @@
 import './style.scss';
-import {Component, MouseEvent} from 'react';
-
-import ReactDiff, {DiffMethod} from '../../src/index';
-import logo from '../../logo.png';
+import { Component, MouseEvent } from 'react';
+import { render } from 'react-dom';
 import cn from 'classnames';
-import {render} from "react-dom";
+import ReactDiff, { DiffMethod } from '../../src/index';
+import logo from '../../logo.png';
 
 const oldJs = require('./diff/javascript/old.rjs').default;
 const newJs = require('./diff/javascript/new.rjs').default;
@@ -33,7 +32,7 @@ class Example extends Component<{}, ExampleState> {
       splitView: true,
       customGutter: true,
       enableSyntaxHighlighting: true,
-      compareMethod: DiffMethod.CHARS
+      compareMethod: DiffMethod.CHARS,
     };
   }
 
@@ -167,7 +166,9 @@ class Example extends Component<{}, ExampleState> {
                   checked={this.state.compareMethod === DiffMethod.JSON}
                   onChange={() => {
                     this.setState({
-                      compareMethod: this.state.compareMethod === DiffMethod.JSON ? DiffMethod.CHARS : DiffMethod.JSON,
+                      compareMethod: this.state.compareMethod === DiffMethod.JSON
+                        ? DiffMethod.CHARS
+                        : DiffMethod.JSON,
                     });
                   }}
                 />
@@ -190,33 +191,33 @@ class Example extends Component<{}, ExampleState> {
             renderGutter={
               this.state.customGutter
                 ? (diffData) => {
-                    return (
-                      <td
-                        className={
-                          diffData.type !== undefined
-                            ? cn(diffData.styles.gutter)
-                            : cn(
-                                diffData.styles.gutter,
-                                diffData.styles.emptyGutter,
-                                {},
-                              )
-                        }
-                        title={'extra info'}
-                      >
-                        <pre className={cn(diffData.styles.lineNumber, {})}>
-                          {diffData.type == 3
-                            ? 'CHG'
-                            : diffData.type == 2
+                  return (
+                    <td
+                      className={
+                        diffData.type !== undefined
+                          ? cn(diffData.styles.gutter)
+                          : cn(
+                            diffData.styles.gutter,
+                            diffData.styles.emptyGutter,
+                            {},
+                          )
+                      }
+                      title={'extra info'}
+                    >
+                      <pre className={cn(diffData.styles.lineNumber, {})}>
+                        {diffData.type == 3
+                          ? 'CHG'
+                          : diffData.type == 2
                             ? 'DEL'
                             : diffData.type == 1
-                            ? 'ADD'
-                            : diffData.type
-                            ? '==='
-                            : undefined}
-                        </pre>
-                      </td>
-                    );
-                  }
+                              ? 'ADD'
+                              : diffData.type
+                                ? '==='
+                                : undefined}
+                      </pre>
+                    </td>
+                  );
+                }
                 : undefined
             }
             renderContent={

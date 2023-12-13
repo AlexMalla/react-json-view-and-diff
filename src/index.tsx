@@ -1,16 +1,18 @@
 import * as React from 'react';
-import * as PropTypes from 'prop-types';
 import cn from 'classnames';
 
-import {computeLineInformation, DiffInformation, DiffMethod, DiffType, LineInformation,} from './compute-lines';
-import computeStyles, {ReactDiffViewerStyles, ReactDiffViewerStylesOverride,} from './styles';
-import {ReactElement} from "react";
-import {computeHiddenBlocks} from "./compute-hidden-blocks";
+import { ReactElement } from 'react';
+import {
+  computeLineInformation, DiffInformation, DiffMethod, DiffType, LineInformation,
+} from './compute-lines';
+import computeStyles, { ReactDiffViewerStyles, ReactDiffViewerStylesOverride } from './styles';
+import { computeHiddenBlocks } from './compute-hidden-blocks';
 
 const m = require('memoize-one');
 
 const memoize = m.default || m;
 
+// eslint-disable-next-line no-shadow
 export enum LineNumberPrefix {
   LEFT = 'L',
   RIGHT = 'R',
@@ -18,9 +20,11 @@ export enum LineNumberPrefix {
 
 export interface ReactDiffViewerProps {
   // Old value to compare.
-  oldValue: string | Object;
+  oldValue: string | object;
   // New value to compare.
-  newValue: string | Object;
+  newValue: string | object;
+  // View a single Json.
+  singleValue: string | object;
   // Enable/Disable split view.
   splitView?: boolean;
   // Set line Offset
@@ -72,8 +76,8 @@ export interface ReactDiffViewerProps {
   leftTitle?: string | ReactElement;
   // Title for left column
   rightTitle?: string | ReactElement;
-  	// Nonce
-	nonce?: string;
+  // Nonce
+  nonce?: string;
 }
 
 export interface ReactDiffViewerState {
@@ -82,14 +86,15 @@ export interface ReactDiffViewerState {
 }
 
 class DiffViewer extends React.Component<
-  ReactDiffViewerProps,
-  ReactDiffViewerState
+ReactDiffViewerProps,
+ReactDiffViewerState
 > {
   private styles: ReactDiffViewerStyles;
 
   public static defaultProps: ReactDiffViewerProps = {
     oldValue: '',
     newValue: '',
+    singleValue: '',
     splitView: true,
     highlightLines: [],
     disableWordDiff: false,
@@ -160,7 +165,7 @@ class DiffViewer extends React.Component<
     if (this.props.onLineNumberClick) {
       return (e: any): void => this.props.onLineNumberClick(id, e);
     }
-    return (): void => {};
+    return (): void => { };
   };
 
   /**
@@ -211,9 +216,8 @@ class DiffViewer extends React.Component<
   ): ReactElement => {
     const lineNumberTemplate = `${prefix}-${lineNumber}`;
     const additionalLineNumberTemplate = `${additionalPrefix}-${additionalLineNumber}`;
-    const highlightLine =
-      this.props.highlightLines.includes(lineNumberTemplate) ||
-      this.props.highlightLines.includes(additionalLineNumberTemplate);
+    const highlightLine = this.props.highlightLines.includes(lineNumberTemplate)
+      || this.props.highlightLines.includes(additionalLineNumberTemplate);
     const added = type === DiffType.ADDED;
     const removed = type === DiffType.REMOVED;
     const changed = type === DiffType.CHANGED;
@@ -247,8 +251,8 @@ class DiffViewer extends React.Component<
         {!this.props.splitView && !this.props.hideLineNumbers && (
           <td
             onClick={
-              additionalLineNumber &&
-              this.onLineNumberClickProxy(additionalLineNumberTemplate)
+              additionalLineNumber
+              && this.onLineNumberClickProxy(additionalLineNumberTemplate)
             }
             className={cn(this.styles.gutter, {
               [this.styles.emptyGutter]: !additionalLineNumber,
@@ -263,14 +267,14 @@ class DiffViewer extends React.Component<
         )}
         {this.props.renderGutter
           ? this.props.renderGutter({
-              lineNumber,
-              type,
-              prefix,
-              value,
-              additionalLineNumber,
-              additionalPrefix,
-              styles: this.styles,
-            })
+            lineNumber,
+            type,
+            prefix,
+            value,
+            additionalLineNumber,
+            additionalPrefix,
+            styles: this.styles,
+          })
           : null}
         <td
           className={cn(this.styles.marker, {
@@ -409,10 +413,7 @@ class DiffViewer extends React.Component<
    *
    * @param id Cold fold block id.
    */
-  private onBlockClickProxy =
-    (id: number): any =>
-    (): void =>
-      this.onBlockExpand(id);
+  private onBlockClickProxy = (id: number): any => (): void => this.onBlockExpand(id);
 
   /**
    * Generates cold fold block. It also uses the custom message renderer when available to show
@@ -482,8 +483,6 @@ class DiffViewer extends React.Component<
     );
   };
 
-
-
   /**
    * Generates the entire diff view.
    */
@@ -491,6 +490,7 @@ class DiffViewer extends React.Component<
     const {
       oldValue,
       newValue,
+      singleValue,
       splitView,
       disableWordDiff,
       compareMethod,
@@ -502,21 +502,19 @@ class DiffViewer extends React.Component<
       disableWordDiff,
       compareMethod,
       linesOffset,
-      this.props.alwaysShowLines
+      this.props.alwaysShowLines,
     );
 
-    const extraLines =
-      this.props.extraLinesSurroundingDiff < 0
-        ? 0
-        : Math.round(this.props.extraLinesSurroundingDiff);
+    const extraLines = this.props.extraLinesSurroundingDiff < 0
+      ? 0
+      : Math.round(this.props.extraLinesSurroundingDiff);
 
-    const { lineBlocks, blocks } = computeHiddenBlocks(lineInformation, diffLines, extraLines)
+    const { lineBlocks, blocks } = computeHiddenBlocks(lineInformation, diffLines, extraLines);
 
     return lineInformation.map(
       (line: LineInformation, lineIndex: number): ReactElement => {
-
         if (this.props.showDiffOnly) {
-          const blockIndex = lineBlocks[lineIndex]
+          const blockIndex = lineBlocks[lineIndex];
 
           if (blockIndex !== undefined) {
             const lastLineOfBlock = blocks[blockIndex].endLine === lineIndex;
@@ -531,8 +529,8 @@ class DiffViewer extends React.Component<
                   )}
                 </React.Fragment>
               );
-            } else if (!this.state.expandedBlocks.includes(blockIndex)) {
-              return null
+            } if (!this.state.expandedBlocks.includes(blockIndex)) {
+              return null;
             }
           }
         }
@@ -540,7 +538,6 @@ class DiffViewer extends React.Component<
         const diffNodes = splitView
           ? this.renderSplitView(line, lineIndex)
           : this.renderInlineView(line, lineIndex);
-
 
         return diffNodes;
       },
@@ -551,6 +548,7 @@ class DiffViewer extends React.Component<
     const {
       oldValue,
       newValue,
+      singleValue,
       useDarkTheme,
       leftTitle,
       rightTitle,
@@ -558,6 +556,13 @@ class DiffViewer extends React.Component<
       hideLineNumbers,
       nonce,
     } = this.props;
+
+    if (!oldValue && !newValue && singleValue) {
+      // Se è presente solo il singleValue, visualizza solo quel valore
+      return (
+        <pre>{JSON.stringify(singleValue, null, 2)}</pre>
+      );
+    }
 
     if (this.props.compareMethod !== DiffMethod.JSON) {
       if (typeof oldValue !== 'string' || typeof newValue !== 'string') {
@@ -569,14 +574,14 @@ class DiffViewer extends React.Component<
     const nodes = this.renderDiff();
     const colSpanOnSplitView = hideLineNumbers ? 2 : 3;
     const colSpanOnInlineView = hideLineNumbers ? 2 : 4;
-    let columnExtension = this.props.renderGutter ? 1 : 0;
+    const columnExtension = this.props.renderGutter ? 1 : 0;
 
     const title = (leftTitle || rightTitle) && (
       <tr>
         <td
           colSpan={
-            (splitView ? colSpanOnSplitView : colSpanOnInlineView) +
-            columnExtension
+            (splitView ? colSpanOnSplitView : colSpanOnInlineView)
+            + columnExtension
           }
           className={this.styles.titleBlock}
         >
