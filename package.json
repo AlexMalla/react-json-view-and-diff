@@ -1,6 +1,6 @@
 {
   "name": "react-json-view-and-diff",
-  "version": "3.3.4",
+  "version": "3.3.5",
   "private": false,
   "description": "Continuation of a simple text diff viewer component made with diff and React. It now allow you to obtain also a single json.",
   "keywords": [
