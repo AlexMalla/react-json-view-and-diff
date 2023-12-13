@@ -70,11 +70,13 @@ const constructLines = (value: string): string[] => {
  *
  * @param oldValue Old word in the line.
  * @param newValue New word in the line.
+ * @param singleValue New word in the line.
  * @param compareMethod JsDiff text diff method from https://github.com/kpdecker/jsdiff/tree/v4.0.1#api
  */
 const computeDiff = (
   oldValue: string | Object,
   newValue: string | Object,
+  singleValue: string | Object,
   compareMethod: string = DiffMethod.CHARS,
 ): ComputedDiffInformation => {
   const diffArray: JsDiffChangeObject[] = jsDiff[compareMethod](
@@ -126,9 +128,10 @@ const computeDiff = (
 const computeLineInformation = (
   oldString: string | Object,
   newString: string | Object,
-  disableWordDiff: boolean = false,
+  singleValue: string | Object,
+  disableWordDiff = false,
   lineCompareMethod: string = DiffMethod.CHARS,
-  linesOffset: number = 0,
+  linesOffset = 0,
   showLines: string[] = [],
 ): ComputedLineInformation => {
   let diffArray: Diff.Change[] = [];
@@ -168,13 +171,13 @@ const computeLineInformation = (
         const left: DiffInformation = {};
         const right: DiffInformation = {};
         if (
-          ignoreDiffIndexes.includes(`${diffIndex}-${lineIndex}`) ||
-          (evaluateOnlyFirstLine && lineIndex !== 0)
+          ignoreDiffIndexes.includes(`${diffIndex}-${lineIndex}`)
+          || (evaluateOnlyFirstLine && lineIndex !== 0)
         ) {
           return undefined;
         }
         if (added || removed) {
-          let countAsChange = true
+          let countAsChange = true;
           if (removed) {
             leftLineNumber += 1;
             left.lineNumber = leftLineNumber;
@@ -210,7 +213,7 @@ const computeLineInformation = (
                 right.lineNumber = lineNumber;
                 if (left.value === rightValue) {
                   // The new value is exactly the same as the old
-                  countAsChange = false
+                  countAsChange = false;
                   right.type = 0;
                   left.type = 0;
                   right.value = rightValue;
@@ -222,9 +225,9 @@ const computeLineInformation = (
                     right.value = rightValue;
                   } else {
                     const computedDiff = computeDiff(
-                        line,
-                        rightValue as string,
-                        lineCompareMethod
+                      line,
+                      rightValue as string,
+                      lineCompareMethod,
                     );
                     right.value = computedDiff.right;
                     left.value = computedDiff.left;
@@ -256,7 +259,7 @@ const computeLineInformation = (
         }
 
         if (showLines?.includes(`L-${left.lineNumber}`) || showLines?.includes(`R-${right.lineNumber}`) && !diffLines.includes(counter)) {
-          diffLines.push(counter)
+          diffLines.push(counter);
         }
 
         if (!evaluateOnlyFirstLine) {
@@ -266,7 +269,6 @@ const computeLineInformation = (
       })
       .filter(Boolean);
   };
-
 
   diffArray.forEach(({ added, removed, value }: diff.Change, index): void => {
     lineInformation = [

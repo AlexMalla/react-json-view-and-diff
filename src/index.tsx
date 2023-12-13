@@ -499,6 +499,7 @@ ReactDiffViewerState
     const { lineInformation, diffLines } = computeLineInformation(
       oldValue,
       newValue,
+      singleValue,
       disableWordDiff,
       compareMethod,
       linesOffset,
@@ -558,7 +559,6 @@ ReactDiffViewerState
     } = this.props;
 
     if (!oldValue && !newValue && singleValue) {
-      // Se è presente solo il singleValue, visualizza solo quel valore
       return (
         <pre>{JSON.stringify(singleValue, null, 2)}</pre>
       );
